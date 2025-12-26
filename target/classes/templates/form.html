@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Event - EventPulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        .form-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 2rem;
+        }
+        
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-section:last-of-type {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="form-hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1 class="display-6 fw-bold mb-3" th:text="${isEdit} ? 'Edit Event' : 'Create New Event'">Create New Event</h1>
+                    <p class="lead mb-0 opacity-75">
+                        <span th:text="${isEdit} ? 'Update your event information' : 'Fill in the details to create an amazing event'"></span>
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')" class="btn btn-light btn-lg">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                    <a th:href="@{/dashboard}" sec:authorize="!hasRole('ADMIN')" class="btn btn-light btn-lg">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="form-container fade-in-up">
+                    <form th:action="${isEdit ? '/events/' + event.id : '/events'}" th:object="${event}" method="post">
+                        <input type="hidden" th:if="${isEdit}" th:field="*{id}">
+                        
+                        <!-- Basic Information Section -->
+                        <div class="form-section">
+                            <h4 class="fw-bold text-dark mb-4">
+                                <i class="bi bi-info-circle me-2 text-primary"></i>Basic Information
+                            </h4>
+                            
+                            <div class="mb-4">
+                                <label for="title" class="form-label fw-semibold">Event Title</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white">
+                                        <i class="bi bi-pencil"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="title" th:field="*{title}" 
+                                           placeholder="Enter a catchy event title" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="description" class="form-label fw-semibold">Description</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-primary text-white align-items-start pt-3">
+                                        <i class="bi bi-text-paragraph"></i>
+                                    </span>
+                                    <textarea class="form-control" id="description" th:field="*{description}" 
+                                              rows="4" placeholder="Describe your event in detail..." required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date & Time Section -->
+                        <div class="form-section">
+                            <h4 class="fw-bold text-dark mb-4">
+                                <i class="bi bi-clock me-2 text-primary"></i>Date & Time
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="startTime" class="form-label fw-semibold">Start Time</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-success text-white">
+                                            <i class="bi bi-play-circle"></i>
+                                        </span>
+                                        <input type="datetime-local" class="form-control" id="startTime" 
+                                               th:field="*{startTime}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="endTime" class="form-label fw-semibold">End Time</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-danger text-white">
+                                            <i class="bi bi-stop-circle"></i>
+                                        </span>
+                                        <input type="datetime-local" class="form-control" id="endTime" 
+                                               th:field="*{endTime}" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Location & Capacity Section -->
+                        <div class="form-section">
+                            <h4 class="fw-bold text-dark mb-4">
+                                <i class="bi bi-geo-alt me-2 text-primary"></i>Location & Capacity
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="location" class="form-label fw-semibold">Location</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-warning text-white">
+                                            <i class="bi bi-pin-map"></i>
+                                        </span>
+                                        <input type="text" class="form-control" id="location" th:field="*{location}" 
+                                               placeholder="Where will the event take place?" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="capacity" class="form-label fw-semibold">Capacity</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-info text-white">
+                                            <i class="bi bi-people"></i>
+                                        </span>
+                                        <input type="number" class="form-control" id="capacity" th:field="*{capacity}" 
+                                               placeholder="100" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <div class="form-check form-switch">
+                                    <input type="checkbox" class="form-check-input" id="accessible" th:field="*{accessible}" role="switch">
+                                    <label class="form-check-label fw-semibold" for="accessible">
+                                        <i class="bi bi-universal-access me-2"></i>This event is accessible for people with disabilities
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Section -->
+                        <div class="form-section text-center">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 me-3">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span th:text="${isEdit ? 'Update Event' : 'Create Event'}">Create Event</span>
+                            </button>
+                            <a th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                            <a th:href="@{/dashboard}" sec:authorize="!hasRole('ADMIN')" class="btn btn-outline-secondary btn-lg">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Help Card -->
+                <div class="card mt-4 border-0 fade-in-up">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-lightbulb fs-1 text-warning mb-3"></i>
+                        <h5 class="fw-bold mb-3">Event Creation Tips</h5>
+                        <div class="row text-start">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Use a clear, descriptive title
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Provide detailed description
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Set realistic capacity limits
+                                </p>
+                                <p class="text-muted mb-2">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Include accessibility information
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

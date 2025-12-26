@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Send RSVP - EventPulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="position-fixed top-0 left-0 w-100 h-100" style="
+        background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        z-index: -1;">
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Header -->
+                <div class="text-center mb-5 fade-in-up">
+                    <h1 class="text-white fw-bold mb-3">Send RSVP Invitation</h1>
+                    <p class="text-light opacity-75">Invite speakers to your events with personalized invitations</p>
+                    <a href="/admin/dashboard" class="btn btn-outline-light">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+
+                <!-- RSVP Form -->
+                <div class="form-section fade-in-up">
+                    <form th:action="@{/admin/rsvp/send}" method="post" class="row g-4">
+                        <div class="col-12">
+                            <h4 class="fw-bold text-dark mb-4">
+                                <i class="bi bi-envelope-paper me-2"></i>Speaker Information
+                            </h4>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Speaker Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white">
+                                    <i class="bi bi-person"></i>
+                                </span>
+                                <input type="text" class="form-control" name="speakerName" 
+                                       placeholder="Enter speaker's full name" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Speaker Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white">
+                                    <i class="bi bi-envelope"></i>
+                                </span>
+                                <input type="email" class="form-control" name="speakerEmail" 
+                                       placeholder="speaker@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Event</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-primary text-white">
+                                    <i class="bi bi-calendar-event"></i>
+                                </span>
+                                <select class="form-select" name="eventId" required>
+                                    <option value="">Select an event</option>
+                                    <option th:each="event : ${events}" 
+                                            th:value="${event.id}"
+                                            th:text="${event.title}">Event Title</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Start Time</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-success text-white">
+                                    <i class="bi bi-clock"></i>
+                                </span>
+                                <input type="datetime-local" class="form-control" name="startDate" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">End Time</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-danger text-white">
+                                    <i class="bi bi-clock-history"></i>
+                                </span>
+                                <input type="datetime-local" class="form-control" name="endDate" required>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100">
+                                <i class="bi bi-send me-2"></i>Send Invitation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Info Card -->
+                <div class="card mt-4 border-0 fade-in-up">
+                    <div class="card-body text-center">
+                        <i class="bi bi-info-circle fs-1 text-primary mb-3"></i>
+                        <h5 class="fw-bold">About RSVP Invitations</h5>
+                        <p class="text-muted mb-0">
+                            Speakers will receive a personalized email invitation with event details 
+                            and a link to confirm their participation.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

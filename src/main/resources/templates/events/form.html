@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Event</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .form-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 0;
+      border-radius: 0 0 30px 30px;
+      margin-bottom: 2rem;
+    }
+    
+    .speaker-entry {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid #6366f1;
+    }
+    
+    .form-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="form-hero">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <h1 class="display-6 fw-bold mb-3" th:text="${isEdit ? 'Edit Event' : 'Create Event'}">Create Event</h1>
+          <p class="lead mb-0 opacity-75">
+            <span th:text="${isEdit ? 'Update your event details' : 'Fill in the details to create a new event'}"></span>
+          </p>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a class="btn btn-light" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+          </a>
+          <a class="btn btn-light" th:href="@{/dashboard}" sec:authorize="!hasRole('ADMIN')">
+            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="form-section fade-in-up">
+          <form th:action="${isEdit} ? @{/events/{id}(id=${event.id})} : @{/events}" method="post" th:object="${event}" class="row g-4">
+            <!-- Basic Information -->
+            <div class="col-12">
+              <h4 class="fw-bold text-dark mb-4">
+                <i class="bi bi-info-circle me-2"></i>Basic Information
+              </h4>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Event Title</label>
+              <div class="input-group">
+                <span class="input-group-text bg-primary text-white">
+                  <i class="bi bi-pencil"></i>
+                </span>
+                <input class="form-control" th:field="*{title}" placeholder="Enter event title" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold">Description</label>
+              <div class="input-group">
+                <span class="input-group-text bg-primary text-white align-items-start pt-3">
+                  <i class="bi bi-text-paragraph"></i>
+                </span>
+                <textarea class="form-control" th:field="*{description}" rows="4" placeholder="Describe your event..."></textarea>
+              </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Start Time</label>
+              <div class="input-group">
+                <span class="input-group-text bg-success text-white">
+                  <i class="bi bi-clock"></i>
+                </span>
+                <input type="datetime-local" class="form-control" th:field="*{startTime}" />
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">End Time</label>
+              <div class="input-group">
+                <span class="input-group-text bg-danger text-white">
+                  <i class="bi bi-clock-history"></i>
+                </span>
+                <input type="datetime-local" class="form-control" th:field="*{endTime}" />
+              </div>
+            </div>
+
+            <!-- Location & Capacity -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Location</label>
+              <div class="input-group">
+                <span class="input-group-text bg-warning text-white">
+                  <i class="bi bi-geo-alt"></i>
+                </span>
+                <input class="form-control" th:field="*{location}" placeholder="Event location" />
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Capacity</label>
+              <div class="input-group">
+                <span class="input-group-text bg-info text-white">
+                  <i class="bi bi-people"></i>
+                </span>
+                <input type="number" class="form-control" th:field="*{capacity}" placeholder="100" />
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="form-check form-switch mt-4 pt-3">
+                <input type="checkbox" class="form-check-input" th:field="*{accessible}" id="accessible" role="switch" />
+                <label class="form-check-label fw-semibold" for="accessible">
+                  <i class="bi bi-universal-access me-1"></i>Accessible
+                </label>
+              </div>
+            </div>
+
+            <!-- Speakers Section -->
+            <div class="col-12 mt-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="fw-bold text-dark mb-0">
+                  <i class="bi bi-mic me-2"></i>Speakers
+                </h4>
+                <button type="button" class="btn btn-outline-primary" onclick="addSpeaker()">
+                  <i class="bi bi-plus-circle me-2"></i>Add Speaker
+                </button>
+              </div>
+              
+              <div id="speakersContainer">
+                <!-- Existing Speakers (when editing) -->
+                <div th:if="${event.speakers}" th:each="speaker, stat : ${event.speakers}" class="speaker-entry">
+                  <input type="hidden" name="speakerIds[]" th:value="${speaker.id}" />
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Speaker Name</label>
+                      <input type="text" class="form-control" name="speakerNames" th:value="${speaker.name}" required 
+                             placeholder="Enter speaker name" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Description</label>
+                      <textarea class="form-control" name="speakerDescriptions" required 
+                                placeholder="Speaker bio or description" th:text="${speaker.description}"></textarea>
+                    </div>
+                    <div class="col-12 text-end">
+                      <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.speaker-entry').remove()">
+                        <i class="bi bi-trash me-1"></i>Remove Speaker
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Default empty speaker entry for new events -->
+                <div th:if="${event.speakers.empty}" class="speaker-entry">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Speaker Name</label>
+                      <input type="text" class="form-control" name="speakerNames" required 
+                             placeholder="Enter speaker name" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-semibold">Description</label>
+                      <textarea class="form-control" name="speakerDescriptions" required 
+                                placeholder="Speaker bio or description"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div class="col-12 mt-4 pt-4 border-top">
+              <div class="d-flex gap-3">
+                <button class="btn btn-primary btn-lg px-5" type="submit">
+                  <i class="bi bi-check-circle me-2"></i>
+                  <span th:text="${isEdit ? 'Update Event' : 'Create Event'}">Save</span>
+                </button>
+                <a class="btn btn-outline-secondary btn-lg" th:href="@{/admin/dashboard}" sec:authorize="hasRole('ADMIN')">
+                  Cancel
+                </a>
+                <a class="btn btn-outline-secondary btn-lg" th:href="@{/dashboard}" sec:authorize="!hasRole('ADMIN')">
+                  Cancel
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function addSpeaker() {
+        const container = document.getElementById('speakersContainer');
+        const newSpeaker = `
+            <div class="speaker-entry">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Speaker Name</label>
+                        <input type="text" class="form-control" name="speakerNames" required 
+                               placeholder="Enter speaker name" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" name="speakerDescriptions" required 
+                                  placeholder="Speaker bio or description"></textarea>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.speaker-entry').remove()">
+                            <i class="bi bi-trash me-1"></i>Remove Speaker
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.insertAdjacentHTML('beforeend', newSpeaker);
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

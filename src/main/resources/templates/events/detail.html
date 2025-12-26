@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${event.title}">Event Detail</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4rem 0;
+      border-radius: 0 0 30px 30px;
+      margin-bottom: 2rem;
+    }
+    
+    .detail-card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .speaker-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+    
+    .speaker-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-8">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-transparent p-0">
+              <li class="breadcrumb-item"><a href="/" class="text-light opacity-75">Home</a></li>
+              <li class="breadcrumb-item"><a href="/dashboard" class="text-light opacity-75">Dashboard</a></li>
+              <li class="breadcrumb-item active text-light" aria-current="page" th:text="${event.title}">Event</li>
+            </ol>
+          </nav>
+          <h1 class="display-5 fw-bold mb-3" th:text="${event.title}">Event Title</h1>
+          <p class="lead mb-4 opacity-75" th:text="${event.description}"></p>
+          <div class="d-flex flex-wrap gap-3">
+            <span class="badge bg-light text-dark px-3 py-2">
+              <i class="bi bi-calendar me-1"></i>
+              <span th:text="${#temporals.format(event.startTime,'dd MMM yyyy')}"></span>
+            </span>
+            <span class="badge bg-light text-dark px-3 py-2">
+              <i class="bi bi-geo-alt me-1"></i>
+              <span th:text="${event.location}"></span>
+            </span>
+            <span class="badge bg-light text-dark px-3 py-2" th:if="${event.accessible}">
+              <i class="bi bi-universal-access me-1"></i>Accessible
+            </span>
+          </div>
+        </div>
+        <div class="col-lg-4 text-lg-end">
+          <a class="btn btn-light btn-lg px-4" th:href="@{/}">
+            <i class="bi bi-arrow-left me-2"></i>Back to Events
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <!-- Event Details -->
+      <div class="col-lg-8">
+        <div class="card detail-card fade-in-up">
+          <div class="card-body p-4">
+            <h3 class="fw-bold mb-4">
+              <i class="bi bi-info-circle me-2 text-primary"></i>Event Details
+            </h3>
+            
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <div class="bg-primary rounded p-3 me-3">
+                    <i class="bi bi-clock text-white fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold text-dark mb-1">Start Time</h6>
+                    <p class="mb-0 text-muted" th:text="${#temporals.format(event.startTime,'dd MMM yyyy, HH:mm')}"></p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <div class="bg-success rounded p-3 me-3">
+                    <i class="bi bi-clock-history text-white fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold text-dark mb-1">End Time</h6>
+                    <p class="mb-0 text-muted" th:text="${#temporals.format(event.endTime,'dd MMM yyyy, HH:mm')}"></p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <div class="bg-warning rounded p-3 me-3">
+                    <i class="bi bi-geo-alt text-white fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold text-dark mb-1">Location</h6>
+                    <p class="mb-0 text-muted" th:text="${event.location}"></p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <div class="bg-info rounded p-3 me-3">
+                    <i class="bi bi-people text-white fs-5"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold text-dark mb-1">Capacity</h6>
+                    <p class="mb-0 text-muted" th:text="${event.capacity + ' attendees'}"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-4">
+              <h6 class="fw-bold text-dark mb-2">Full Description</h6>
+              <p class="text-muted lh-lg" th:text="${event.description}"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Speakers Section -->
+        <div class="card detail-card fade-in-up">
+          <div class="card-body p-4">
+            <h3 class="fw-bold mb-4">
+              <i class="bi bi-mic me-2 text-primary"></i>Event Speakers
+            </h3>
+            
+            <div class="row g-4" th:if="${!event.speakers.empty}">
+              <div class="col-md-6" th:each="speaker : ${event.speakers}">
+                <div class="card speaker-card h-100">
+                  <div class="card-body p-4">
+                    <div class="d-flex align-items-start mb-3">
+                      <div class="bg-primary rounded-circle p-3 me-3">
+                        <i class="bi bi-person text-white fs-5"></i>
+                      </div>
+                      <div>
+                        <h5 class="card-title fw-bold mb-1" th:text="${speaker.name}">Speaker Name</h5>
+                        <p class="card-text text-muted mb-0" th:text="${speaker.description}">Speaker Description</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div th:if="${event.speakers.empty}" class="text-center py-5">
+              <i class="bi bi-mic-mute fs-1 text-muted mb-3"></i>
+              <h5 class="text-muted">No Speakers Announced</h5>
+              <p class="text-muted mb-0">Check back later for speaker updates.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <div class="card detail-card fade-in-up">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Quick Actions</h5>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary">
+                <i class="bi bi-calendar-plus me-2"></i>Add to Calendar
+              </button>
+              <button class="btn btn-outline-primary">
+                <i class="bi bi-share me-2"></i>Share Event
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card detail-card fade-in-up">
+          <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Event Status</h5>
+            <div class="d-flex align-items-center">
+              <div class="bg-success rounded-circle p-2 me-3">
+                <i class="bi bi-check-circle text-white"></i>
+              </div>
+              <div>
+                <h6 class="fw-bold mb-0">Active</h6>
+                <small class="text-muted">Registration open</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

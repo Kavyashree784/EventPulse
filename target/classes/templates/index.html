@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EventPulse - Discover Amazing Events</title>
+  <link th:href="@{/css/style.css}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+  <style>
+    .hero-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6rem 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="rgba(255,255,255,0.05)" points="0,1000 1000,0 1000,1000"/></svg>');
+      background-size: cover;
+    }
+    
+    .event-card {
+      transition: all 0.3s ease;
+      border: none;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    
+    .event-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stats-section {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container position-relative">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-4">Discover Amazing Events</h1>
+          <p class="lead mb-5 opacity-75">
+            Join thousands of participants in unforgettable experiences. From tech conferences to creative workshops, find your next adventure.
+          </p>
+          
+          <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mb-5">
+            <a sec:authorize="hasRole('ADMIN')" class="btn btn-light btn-lg px-4" th:href="@{/events/new}">
+              <i class="bi bi-plus-circle me-2"></i>Create Event
+            </a>
+            <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-rocket me-2"></i>Get Started
+            </a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/dashboard}" class="btn btn-outline-light btn-lg px-4">
+              <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Stats -->
+      <div class="row justify-content-center">
+        <div class="col-lg-10">
+          <div class="stats-section">
+            <div class="row text-center">
+              <div class="col-md-4 mb-3">
+                <h3 class="fw-bold text-white mb-1" th:text="${totalEvents}">0</h3>
+                <p class="mb-0 opacity-75">Total Events</p>
+              </div>
+              <div class="col-md-4 mb-3">
+                <h3 class="fw-bold text-white mb-1" th:text="${activeEventCount}">0</h3>
+                <p class="mb-0 opacity-75">Active Now</p>
+              </div>
+              <div class="col-md-4 mb-3">
+                <h3 class="fw-bold text-white mb-1" th:text="${totalUsers}">0</h3>
+                <p class="mb-0 opacity-75">Happy Users</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Section -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center">
+            <h2 class="fw-bold">Upcoming Events</h2>
+            <div class="d-flex align-items-center gap-3">
+              <div sec:authorize="!isAuthenticated()" class="d-flex gap-2">
+                <a th:href="@{/login}" class="btn btn-outline-primary">Login</a>
+              </div>
+              <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+                <span class="navbar-text">
+                  <i class="bi bi-person-circle me-2"></i>
+                  Welcome, <span sec:authentication="name"></span>
+                </span>
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                  <button type="submit" class="btn btn-outline-danger">Logout</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <p class="text-muted">Discover and register for upcoming events that match your interests</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12" th:each="e : ${events}">
+          <div class="card event-card fade-in-up">
+            <div class="card-body p-4">
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <div class="d-flex align-items-start">
+                    <div class="bg-primary rounded p-3 me-4">
+                      <i class="bi bi-calendar-event text-white fs-4"></i>
+                    </div>
+                    <div>
+                      <h4 class="card-title fw-bold mb-2">
+                        <a th:href="@{/events/{id}(id=${e.id})}" th:text="${e.title}" class="text-decoration-none text-dark"></a>
+                      </h4>
+                      <p class="card-text text-muted mb-3" th:text="${#strings.abbreviate(e.description, 150)}"></p>
+                      <div class="d-flex flex-wrap gap-3">
+                        <span class="badge bg-light text-dark">
+                          <i class="bi bi-clock me-1"></i>
+                          <span th:text="${#temporals.format(e.startTime,'dd MMM yyyy HH:mm')}"></span>
+                        </span>
+                        <span class="badge bg-light text-dark">
+                          <i class="bi bi-geo-alt me-1"></i>
+                          <span th:text="${e.location}"></span>
+                        </span>
+                        <span class="badge bg-primary" th:if="${e.accessible}">
+                          <i class="bi bi-universal-access me-1"></i>Accessible
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                  <a th:href="@{/events/{id}(id=${e.id})}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-eye me-2"></i>View Details
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Empty State -->
+        <div class="col-12 text-center py-5" th:if="${events.empty}">
+          <i class="bi bi-calendar-x fs-1 text-muted mb-3"></i>
+          <h4 class="text-muted">No Upcoming Events</h4>
+          <p class="text-muted mb-4">Check back later for new events or create one yourself.</p>
+          <a sec:authorize="hasRole('ADMIN')" class="btn btn-primary" th:href="@{/events/new}">
+            <i class="bi bi-plus-circle me-2"></i>Create First Event
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-5 bg-light">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-12">
+          <h2 class="fw-bold mb-3">Why Choose EventPulse?</h2>
+          <p class="text-muted lead">The ultimate platform for event management and discovery</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card border-0 text-center h-100">
+            <div class="card-body p-4">
+              <div class="bg-primary rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                <i class="bi bi-lightning text-white fs-3"></i>
+              </div>
+              <h5 class="fw-bold">Easy Management</h5>
+              <p class="text-muted">Create and manage events with our intuitive dashboard and tools.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card border-0 text-center h-100">
+            <div class="card-body p-4">
+              <div class="bg-success rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                <i class="bi bi-bell text-white fs-3"></i>
+              </div>
+              <h5 class="fw-bold">Smart Notifications</h5>
+              <p class="text-muted">Get real-time updates and reminders for your registered events.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card border-0 text-center h-100">
+            <div class="card-body p-4">
+              <div class="bg-warning rounded-circle p-3 mx-auto mb-4" style="width: 80px; height: 80px;">
+                <i class="bi bi-people text-white fs-3"></i>
+              </div>
+              <h5 class="fw-bold">Community Driven</h5>
+              <p class="text-muted">Join a vibrant community of event organizers and participants.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
