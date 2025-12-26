@@ -1,11 +1,46 @@
-# EventPulse
+# 🎓 EventPulse
 
-EventPulse — Real-Time Academic Event Tracker
+### Real-Time Academic Event Tracker
 
-Run:
+**EventPulse** is a Spring Boot application for managing academic events with real-time updates for students and organizers.
 
-1. Create MySQL DB: `CREATE DATABASE eventpulse;`
-2. Edit `src/main/resources/application.properties` with your DB credentials.
-3. Run: `mvn spring-boot:run` (requires Java 17+ and Maven installed).
+## 🚀 Key Features
 
-Project skeleton built for Spring Boot + Thymeleaf + MySQL.
+* **Real-Time Dashboard:** Instant event updates via WebSockets.
+* **Role-Based Access:** Secure login for Admins and Students.
+* **Smart Notifications:** Automated email RSVPs.
+* **Responsive UI:** Built with Thymeleaf & Bootstrap 5.
+
+## 🛠️ Tech Stack
+
+* **Backend:** Java 17, Spring Boot 3.2.0
+* **Database:** MySQL, Spring Data JPA
+* **Frontend:** Thymeleaf, Bootstrap, JavaScript
+
+## ⚡ Quick Start
+
+**1. Database Setup**
+Create the database in MySQL:
+
+```sql
+CREATE DATABASE eventpulse;
+
+```
+
+**2. Configure**
+Edit `src/main/resources/application.properties` with your credentials:
+
+```properties
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD
+# Add your mail password if testing emails
+spring.mail.password=YOUR_APP_PASSWORD
+
+```
+
+**3. Run**
+
+```bash
+mvn spring-boot:run
+
+
